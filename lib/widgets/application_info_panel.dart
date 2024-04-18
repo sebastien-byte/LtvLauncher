@@ -21,7 +21,6 @@ import 'package:flauncher/providers/apps_service.dart';
 import 'package:flauncher/widgets/right_panel_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ApplicationInfoPanel extends StatelessWidget {
   final Category? category;
@@ -35,10 +34,7 @@ class ApplicationInfoPanel extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-
-    return RightPanelDialog(
+  Widget build(BuildContext context) => RightPanelDialog(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -76,7 +72,7 @@ class ApplicationInfoPanel extends StatelessWidget {
                 children: [
                   const Icon(Icons.open_in_new),
                   Container(width: 8),
-                  Text(localizations.open, style: Theme.of(context).textTheme.bodyMedium),
+                  Text("Open", style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
               onPressed: () async {
@@ -90,7 +86,7 @@ class ApplicationInfoPanel extends StatelessWidget {
                   children: [
                     const Icon(Icons.open_with),
                     Container(width: 8),
-                    Text(localizations.reorder, style: Theme.of(context).textTheme.bodyMedium),
+                    Text("Reorder", style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 onPressed: () => Navigator.of(context).pop(ApplicationInfoPanelResult.reorderApp),
@@ -100,7 +96,7 @@ class ApplicationInfoPanel extends StatelessWidget {
                 children: [
                   Icon(application.hidden ? Icons.visibility : Icons.visibility_off_outlined),
                   Container(width: 8),
-                  Text(application.hidden ? localizations.show : localizations.hide, style: Theme.of(context).textTheme.bodyMedium),
+                  Text(application.hidden ? "Unhide" : "Hide", style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
               onPressed: () async {
@@ -120,7 +116,7 @@ class ApplicationInfoPanel extends StatelessWidget {
                     Container(width: 8),
                     Flexible(
                       child: Text(
-                        localizations.removeFrom(category!.name),
+                        "Remove from ${category!.name}",
                         style: Theme.of(context).textTheme.bodyMedium,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -139,7 +135,7 @@ class ApplicationInfoPanel extends StatelessWidget {
                 children: [
                   const Icon(Icons.info_outlined),
                   Container(width: 8),
-                  Text(localizations.appInfo, style: Theme.of(context).textTheme.bodyMedium),
+                  Text("App info", style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
               onPressed: () => context.read<AppsService>().openAppInfo(application),
@@ -149,7 +145,7 @@ class ApplicationInfoPanel extends StatelessWidget {
                 children: [
                   const Icon(Icons.delete_outlined),
                   Container(width: 8),
-                  Text(localizations.uninstall, style: Theme.of(context).textTheme.bodyMedium),
+                  Text("Uninstall", style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
               onPressed: () async {
@@ -160,7 +156,6 @@ class ApplicationInfoPanel extends StatelessWidget {
           ],
         ),
       );
-  }
 }
 
 enum ApplicationInfoPanelResult { none, reorderApp }

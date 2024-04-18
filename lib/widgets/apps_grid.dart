@@ -26,9 +26,6 @@ import 'package:flauncher/widgets/settings/categories_panel_page.dart';
 import 'package:flauncher/widgets/settings/settings_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import '../providers/settings_service.dart';
 
 class AppsGrid extends StatelessWidget {
   final Category category;
@@ -44,22 +41,15 @@ class AppsGrid extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Selector<SettingsService, bool>(
-              selector: (context, service) => service.showCategoryTitles,
-              builder: (context, showCategoriesTitle, _) {
-                if (showCategoriesTitle) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 16, bottom: 8),
-                    child: Text(category.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .copyWith(shadows: [const Shadow(color: Colors.black54, offset: Offset(1, 1), blurRadius: 8)])),
-                  );
-                }
-
-                return SizedBox.shrink();
-              }
+          Padding(
+            padding: EdgeInsets.only(left: 16),
+            child: Text(
+              category.name,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .copyWith(shadows: [Shadow(color: Colors.black54, offset: Offset(1, 1), blurRadius: 8)]),
+            ),
           ),
           applications.isNotEmpty
               ? GridView.custom(
@@ -135,10 +125,7 @@ class AppsGrid extends StatelessWidget {
         crossAxisSpacing: 16,
       );
 
-  Widget _emptyState(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-
-    return Padding(
+  Widget _emptyState(BuildContext context) => Padding(
         padding: EdgeInsets.only(top: 8),
         child: SizedBox(
           height: 110,
@@ -162,7 +149,7 @@ class AppsGrid extends StatelessWidget {
                         padding: EdgeInsets.all(8),
                         child: Center(
                           child: Text(
-                            localizations.textEmptyCategory,
+                            "This category is empty.",
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -175,5 +162,4 @@ class AppsGrid extends StatelessWidget {
           ),
         ),
       );
-  }
 }

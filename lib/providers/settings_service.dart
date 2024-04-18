@@ -26,32 +26,20 @@ const _appHighlightAnimationEnabledKey = "app_highlight_animation_enabled";
 const _gradientUuidKey = "gradient_uuid";
 const _backButtonAction = "back_button_action";
 const _dateFormat = "date_format";
-const _showCategoryTitles = "show_category_titles";
-const _showDateInStatusBar = "show_date_in_status_bar";
-const _showTimeInStatusBar = "show_time_in_status_bar";
 const _timeFormat = "time_format";
 
 class SettingsService extends ChangeNotifier {
-  static final defaultDateFormat = "EEEE d";
-  static final defaultTimeFormat = "H:mm";
   final SharedPreferences _sharedPreferences;
 
-
   bool get appHighlightAnimationEnabled => _sharedPreferences.getBool(_appHighlightAnimationEnabledKey) ?? true;
-
-  bool get showCategoryTitles => _sharedPreferences.getBool(_showCategoryTitles) ?? true;
-
-  bool get showDateInStatusBar => _sharedPreferences.getBool(_showDateInStatusBar) ?? true;
-
-  bool get showTimeInStatusBar => _sharedPreferences.getBool(_showTimeInStatusBar) ?? true;
 
   String? get gradientUuid => _sharedPreferences.getString(_gradientUuidKey);
 
   String get backButtonAction => _sharedPreferences.getString(_backButtonAction) ?? BACK_BUTTON_ACTION_NOTHING;
 
-  String get dateFormat => _sharedPreferences.getString(_dateFormat) ?? defaultDateFormat;
+  String get dateFormat => _sharedPreferences.getString(_dateFormat) ?? "EEEE d";
 
-  String get timeFormat => _sharedPreferences.getString(_timeFormat) ?? defaultTimeFormat;
+  String get timeFormat => _sharedPreferences.getString(_timeFormat) ?? "H:mm";
 
   SettingsService(
     this._sharedPreferences
@@ -77,21 +65,6 @@ class SettingsService extends ChangeNotifier {
       _sharedPreferences.setString(_dateFormat, dateFormatString),
       _sharedPreferences.setString(_timeFormat, timeFormatString)
     ]);
-    notifyListeners();
-  }
-
-  Future<void> setShowCategoryTitles(bool show) async {
-    await _sharedPreferences.setBool(_showCategoryTitles, show);
-    notifyListeners();
-  }
-
-  Future<void> setShowDateInStatusBar(bool show) async {
-    await _sharedPreferences.setBool(_showDateInStatusBar, show);
-    notifyListeners();
-  }
-
-  Future<void> setShowTimeInStatusBar(bool show) async {
-    await _sharedPreferences.setBool(_showTimeInStatusBar, show);
     notifyListeners();
   }
 }

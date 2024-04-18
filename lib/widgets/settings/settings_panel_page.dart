@@ -23,13 +23,11 @@ import 'package:flauncher/widgets/settings/applications_panel_page.dart';
 import 'package:flauncher/widgets/settings/categories_panel_page.dart';
 import 'package:flauncher/widgets/settings/date_time_format_dialog.dart';
 import 'package:flauncher/widgets/settings/flauncher_about_dialog.dart';
-import 'package:flauncher/widgets/settings/status_bar_panel_page.dart';
 import 'package:flauncher/widgets/settings/wallpaper_panel_page.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'back_button_actions.dart';
 
@@ -37,23 +35,20 @@ class SettingsPanelPage extends StatelessWidget {
   static const String routeName = "settings_panel";
 
   @override
-  Widget build(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-
-    return Consumer<SettingsService>(
+  Widget build(BuildContext context) => Consumer<SettingsService>(
         builder: (context, settingsService, __) => SingleChildScrollView(
           child: Column(
             children: [
-              Text(localizations.settings, style: Theme.of(context).textTheme.titleLarge),
-              const Divider(),
+              Text("Settings", style: Theme.of(context).textTheme.titleLarge),
+              Divider(),
               EnsureVisible(
                 alignment: 0.5,
                 child: TextButton(
                   child: Row(
                     children: [
-                      const Icon(Icons.apps),
+                      Icon(Icons.apps),
                       Container(width: 8),
-                      Text(localizations.applications, style: Theme.of(context).textTheme.bodyMedium),
+                      Text("Applications", style: Theme.of(context).textTheme.bodyMedium),
                     ],
                   ),
                   onPressed: () => Navigator.of(context).pushNamed(ApplicationsPanelPage.routeName),
@@ -62,9 +57,9 @@ class SettingsPanelPage extends StatelessWidget {
               TextButton(
                 child: Row(
                   children: [
-                    const Icon(Icons.category),
+                    Icon(Icons.category),
                     Container(width: 8),
-                    Text(localizations.categories, style: Theme.of(context).textTheme.bodyMedium),
+                    Text("Categories", style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 onPressed: () => Navigator.of(context).pushNamed(CategoriesPanelPage.routeName),
@@ -72,41 +67,31 @@ class SettingsPanelPage extends StatelessWidget {
               TextButton(
                 child: Row(
                   children: [
-                    const Icon(Icons.wallpaper_outlined),
+                    Icon(Icons.wallpaper_outlined),
                     Container(width: 8),
-                    Text(localizations.wallpaper, style: Theme.of(context).textTheme.bodyMedium),
+                    Text("Wallpaper", style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 onPressed: () => Navigator.of(context).pushNamed(WallpaperPanelPage.routeName),
               ),
+              Divider(),
               TextButton(
                 child: Row(
                   children: [
-                    const Icon(Icons.tips_and_updates),
+                    Icon(Icons.settings_outlined),
                     Container(width: 8),
-                    Text(localizations.statusBar, style: Theme.of(context).textTheme.bodyMedium),
-                  ],
-                ),
-                onPressed: () => Navigator.of(context).pushNamed(StatusBarPanelPage.routeName),
-              ),
-              const Divider(),
-              TextButton(
-                child: Row(
-                  children: [
-                    const Icon(Icons.settings_outlined),
-                    Container(width: 8),
-                    Text(localizations.systemSettings, style: Theme.of(context).textTheme.bodyMedium),
+                    Text("Android settings", style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 onPressed: () => context.read<AppsService>().openSettings(),
               ),
-              const Divider(),
+              Divider(),
               TextButton(
                 child: Row(
                   children: [
-                    const Icon(Icons.date_range),
+                    Icon(Icons.date_range),
                     Container(width: 8),
-                    Text(localizations.dateAndTimeFormat, style: Theme.of(context).textTheme.bodyMedium),
+                    Text("Date and time format", style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 onPressed: () async => await _dateTimeFormatDialog(context),
@@ -114,34 +99,27 @@ class SettingsPanelPage extends StatelessWidget {
               TextButton(
                 child: Row(
                   children: [
-                    const Icon(Icons.arrow_back),
+                    Icon(Icons.arrow_back),
                     Container(width: 8),
-                    Text(localizations.backButtonAction, style: Theme.of(context).textTheme.bodyMedium),
+                    Text("Back button action", style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 onPressed: () async => await _backButtonActionDialog(context),
               ),
               SwitchListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                contentPadding: EdgeInsets.symmetric(horizontal: 8),
                 value: settingsService.appHighlightAnimationEnabled,
                 onChanged: (value) => settingsService.setAppHighlightAnimationEnabled(value),
-                title: Text(localizations.appCardHighlightAnimation),
+                title: Text("App card highlight animation"),
                 dense: true,
               ),
-              SwitchListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                value: settingsService.showCategoryTitles,
-                onChanged: (value) => settingsService.setShowCategoryTitles(value),
-                title: Text(localizations.showCategoryTitles),
-                dense: true,
-              ),
-              const Divider(),
+              Divider(),
               TextButton(
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline),
+                    Icon(Icons.info_outline),
                     Container(width: 8),
-                    Text(localizations.aboutFlauncher, style: Theme.of(context).textTheme.bodyMedium),
+                    Text("About FLauncher", style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 onPressed: () => showDialog(
@@ -158,27 +136,25 @@ class SettingsPanelPage extends StatelessWidget {
           ),
         ),
       );
-  }
 
   Future<void> _backButtonActionDialog(BuildContext context) async {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
     SettingsService service = context.read<SettingsService>();
 
     final newAction = await showDialog<String>(
         context: context,
         builder: (context) => SimpleDialog(
-            title: Text(localizations.dialogTitleBackButtonAction),
+            title: const Text("Choose the back button action"),
             children: [
               SimpleDialogOption(
-                child: Text(localizations.dialogOptionBackButtonActionDoNothing),
+                child: const Text("Do nothing"),
                 onPressed: () => Navigator.pop(context, ""),
               ),
               SimpleDialogOption(
-                child: Text(localizations.dialogOptionBackButtonActionShowClock),
+                child: const Text("Show clock"),
                 onPressed: () => Navigator.pop(context, BACK_BUTTON_ACTION_CLOCK),
               ),
               SimpleDialogOption(
-                child: Text(localizations.dialogOptionBackButtonActionShowScreensaver),
+                child: const Text("Show screensaver"),
                 onPressed: () => Navigator.pop(context, BACK_BUTTON_ACTION_SCREENSAVER),
               )
             ]

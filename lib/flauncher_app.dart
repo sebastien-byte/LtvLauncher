@@ -17,20 +17,26 @@
  */
 
 import 'package:flauncher/actions.dart';
+import 'package:flauncher/providers/apps_service.dart';
+import 'package:flauncher/providers/launcher_state.dart';
+import 'package:flauncher/providers/network_service.dart';
+import 'package:flauncher/providers/settings_service.dart';
+import 'package:flauncher/providers/wallpaper_service.dart';
+import 'package:flauncher/widgets/settings/back_button_actions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'database.dart';
 import 'flauncher.dart';
+import 'flauncher_channel.dart';
 
-class FLauncherApp extends StatelessWidget
-{
-  static const PrioritizedIntents _backIntents = PrioritizedIntents(orderedIntents: [
-    DismissIntent(),
-    BackIntent()
-  ]);
+class FLauncherApp extends StatelessWidget {
+  final SharedPreferences _sharedPreferences;
+  final FLauncherChannel _fLauncherChannel;
+  final FLauncherDatabase _fLauncherDatabase;
 
   static const MaterialColor _swatch = MaterialColor(0xFF011526, <int, Color>{
     50: Color(0xFF36A0FA),
@@ -45,26 +51,43 @@ class FLauncherApp extends StatelessWidget
     900: Color(0xFF000000),
   });
 
-  const FLauncherApp();
+  const FLauncherApp(
+    this._sharedPreferences,
+    this._fLauncherChannel,
+    this._fLauncherDatabase,
+  );
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (_) => SettingsService(_sharedPreferences),
+              lazy: false),
+          ChangeNotifierProvider(create: (_) => AppsService(_fLauncherChannel, _fLauncherDatabase)),
+          ChangeNotifierProvider(create: (_) => LauncherState()),
+          ChangeNotifierProvider(create: (_) => NetworkService(_fLauncherChannel)),
+          ChangeNotifierProvider(
+            create: (context) {
+              // Since the WallpaperService only wraps the gradient setting,
+              // it shouldn't be needed to listen to it here
+              SettingsService settingsService = Provider.of(context, listen: false);
+              return WallpaperService(_fLauncherChannel, settingsService);
+            }
+          ),
+        ],
+        child: MaterialApp(
           shortcuts: {
             ...WidgetsApp.defaultShortcuts,
-            const SingleActivator(LogicalKeyboardKey.escape): _backIntents,
-            const SingleActivator(LogicalKeyboardKey.gameButtonB): _backIntents,
             const SingleActivator(LogicalKeyboardKey.select): const ActivateIntent(),
+            const SingleActivator(LogicalKeyboardKey.gameButtonB): const PrioritizedIntents(orderedIntents: [
+              DismissIntent(),
+              BackIntent(),
+            ]),
           },
           actions: {
             ...WidgetsApp.defaultActions,
-            DirectionalFocusIntent: SoundFeedbackDirectionalFocusAction(context)
+            DirectionalFocusIntent: SoundFeedbackDirectionalFocusAction(context),
           },
-          localizationsDelegates: [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
           title: 'FLauncher',
           theme: ThemeData(
             useMaterial3: true,
@@ -88,9 +111,31 @@ class FLauncherApp extends StatelessWidget
             ),
           ),
           home: Builder(
-            builder: (context) => PopScope(
-              child: FLauncher()
+            builder: (context) => WillPopScope(
+              child: Actions(actions: { BackIntent: BackAction(context, systemNavigator: true) }, child: FLauncher()),
+              onWillPop: () async {
+                AppsService appsService = context.read<AppsService>();
+                LauncherState launcherState = context.read<LauncherState>();
+                SettingsService settingsService = context.read<SettingsService>();
+
+                final bool shouldPop = !kDebugMode && await shouldPopScope(context);
+                if (!shouldPop) {
+                  String action = settingsService.backButtonAction;
+
+                  switch (action) {
+                    case BACK_BUTTON_ACTION_CLOCK:
+                      launcherState.toggleLauncherVisibility();
+                      break;
+                    case BACK_BUTTON_ACTION_SCREENSAVER:
+                      appsService.startAmbientMode();
+                      break;
+                  }
+                }
+
+                return shouldPop;
+              },
             ),
           ),
+        ),
       );
 }
