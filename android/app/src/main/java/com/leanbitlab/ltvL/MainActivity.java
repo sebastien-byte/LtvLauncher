@@ -35,6 +35,8 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +66,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class MainActivity extends FlutterActivity {
+    private static final List<String> ALLOWED_ACTIONS = Collections.unmodifiableList(Arrays.asList(
+            Settings.ACTION_SETTINGS
+    ));
+
     private final String METHOD_CHANNEL = "me.efesser.flauncher/method";
     private final String APPS_EVENT_CHANNEL = "me.efesser.flauncher/event_apps";
     private final String NETWORK_EVENT_CHANNEL = "me.efesser.flauncher/event_network";
@@ -79,6 +85,7 @@ public class MainActivity extends FlutterActivity {
                 case "getApplications" -> result.success(getApplications());
                 case "getApplicationBanner" -> result.success(getApplicationBanner(call.arguments()));
                 case "getApplicationIcon" -> result.success(getApplicationIcon(call.arguments()));
+                case "applicationExists" -> result.success(applicationExists(call.arguments()));
                 case "launchActivityFromAction" -> result.success(launchActivityFromAction(call.arguments()));
                 case "launchApp" -> result.success(launchApp(call.arguments()));
                 case "openSettings" -> result.success(openSettings());
@@ -279,6 +286,23 @@ public class MainActivity extends FlutterActivity {
         return imageBytes;
     }
 
+    private boolean applicationExists(String packageName) {
+        int flags;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            flags = PackageManager.MATCH_UNINSTALLED_PACKAGES;
+        } else {
+            flags = PackageManager.GET_UNINSTALLED_PACKAGES;
+        }
+
+        try {
+            getPackageManager().getApplicationInfo(packageName, flags);
+            return true;
+        } catch (PackageManager.NameNotFoundException ignored) {
+            return false;
+        }
+    }
+
     private List<ResolveInfo> queryIntentActivities(boolean sideloaded) {
         String category;
         if (sideloaded) {
@@ -322,11 +346,10 @@ public class MainActivity extends FlutterActivity {
     }
 
     private boolean launchActivityFromAction(String action) {
-        // Prevent Intent Action Injection by only allowing known actions
-        if (Settings.ACTION_SETTINGS.equals(action)) {
-            return tryStartActivity(new Intent(action));
+        if (action == null || !ALLOWED_ACTIONS.contains(action)) {
+            return false;
         }
-        return false;
+        return tryStartActivity(new Intent(action));
     }
 
     private boolean launchApp(String packageName) {
