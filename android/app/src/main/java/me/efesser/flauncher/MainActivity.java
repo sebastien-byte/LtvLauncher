@@ -331,11 +331,7 @@ public class MainActivity extends FlutterActivity {
     }
 
     private boolean launchActivityFromAction(String action) {
-        // Prevent Intent Action Injection by only allowing known actions
-        if (Settings.ACTION_SETTINGS.equals(action)) {
-            return tryStartActivity(new Intent(action));
-        }
-        return false;
+        return tryStartActivity(new Intent(action));
     }
 
     private boolean launchApp(String packageName) {
