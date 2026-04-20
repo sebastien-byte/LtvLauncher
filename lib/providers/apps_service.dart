@@ -292,13 +292,6 @@ class AppsService extends ChangeNotifier
     _launcherSections.addAll(spacers);
     _launcherSections.sort((ls0, ls1) => ls0.order.compareTo(ls1.order));
 
-    Map<String, List<AppCategory>> appsCategoriesByPackage = {};
-    if (appsCategories.isNotEmpty) {
-      for (AppCategory appCategory in appsCategories) {
-        (appsCategoriesByPackage[appCategory.appPackageName] ??= []).add(appCategory);
-      }
-    }
-
     for (App application in _applications.values) {
       Map? applicationFromSystem = appsFromSystemByPackageName[application.packageName]?.$1;
 
@@ -312,15 +305,14 @@ class AppsService extends ChangeNotifier
       }
 
       if (appsCategories.isNotEmpty && !application.hidden) {
-        List<AppCategory>? currentApplicationCategories = appsCategoriesByPackage[application.packageName];
+        Iterable<AppCategory> currentApplicationCategories = appsCategories
+            .where((appCategory) => appCategory.appPackageName == application.packageName);
 
-        if (currentApplicationCategories != null) {
-          for (AppCategory appCategory in currentApplicationCategories) {
-            if (_categoriesById.containsKey(appCategory.categoryId)) {
-              Category category = _categoriesById[appCategory.categoryId]!;
-              application.categoryOrders[category.id] = appCategory.order;
-              category.applications.add(application);
-            }
+        for (AppCategory appCategory in currentApplicationCategories) {
+          if (_categoriesById.containsKey(appCategory.categoryId)) {
+            Category category = _categoriesById[appCategory.categoryId]!;
+            application.categoryOrders[category.id] = appCategory.order;
+            category.applications.add(application);
           }
         }
       }
