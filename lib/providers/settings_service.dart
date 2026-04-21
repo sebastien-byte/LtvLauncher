@@ -31,7 +31,7 @@ const _backButtonAction = "back_button_action";
 const _dateFormat = "date_format";
 const _showCategoryTitles = "show_category_titles";
 const _showAppNamesBelowIcons = "show_app_names_below_icons";
-const _appBannerShape = "app_banner_shape";
+const _squareBannerShapeEnabled = "square_banner_shape_enabled";
 const _hideHighlightOutlineOnHomescreen = "hide_highlight_outline_on_homescreen";
 const _appSelectorTransitionAnimationEnabled = "app_selector_transition_animation_enabled";
 const _showDateInStatusBar = "show_date_in_status_bar";
@@ -81,7 +81,7 @@ class SettingsService extends ChangeNotifier {
 
   bool get showAppNamesBelowIcons => _sharedPreferences.getBool(_showAppNamesBelowIcons) ?? false;
 
-  String get appBannerShape => _sharedPreferences.getString(_appBannerShape) ?? "google_tv";
+  bool get squareBannerShapeEnabled => _sharedPreferences.getBool(_squareBannerShapeEnabled) ?? false;
 
   bool get hideHighlightOutlineOnHomescreen => _sharedPreferences.getBool(_hideHighlightOutlineOnHomescreen) ?? false;
 
@@ -161,9 +161,8 @@ class SettingsService extends ChangeNotifier {
     return set(_showAppNamesBelowIcons, show);
   }
 
-  Future<void> setAppBannerShape(String shape) async {
-    await _sharedPreferences.setString(_appBannerShape, shape);
-    notifyListeners();
+  Future<void> setSquareBannerShapeEnabled(bool enabled) async {
+    return set(_squareBannerShapeEnabled, enabled);
   }
 
   Future<void> setHideHighlightOutlineOnHomescreen(bool enabled) async {
