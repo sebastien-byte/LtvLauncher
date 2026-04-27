@@ -233,8 +233,10 @@ class AppsService extends ChangeNotifier {
           shouldNotifyListeners: false,
         );
         Category nonTvAppsCategory = _categoriesById[categoryId]!;
-        await addAllToCategory(nonTvApplications, nonTvAppsCategory,
-            shouldNotifyListeners: false);
+        for (final app in nonTvApplications) {
+          await addToCategory(app, nonTvAppsCategory,
+              shouldNotifyListeners: false);
+        }
       }
 
       if (tvApplications.isNotEmpty) {
@@ -242,8 +244,10 @@ class AppsService extends ChangeNotifier {
             type: CategoryType.grid, shouldNotifyListeners: false);
 
         Category tvAppsCategory = _categoriesById[categoryId]!;
-        await addAllToCategory(tvApplications, tvAppsCategory,
-            shouldNotifyListeners: false);
+        for (final app in tvApplications) {
+          await addToCategory(app, tvAppsCategory,
+              shouldNotifyListeners: false);
+        }
       }
 
       await addCategory("Favorites", shouldNotifyListeners: false);
@@ -481,36 +485,24 @@ class AppsService extends ChangeNotifier {
 
   Future<void> addToCategory(App app, Category category,
       {bool shouldNotifyListeners = true}) async {
-    await addAllToCategory([app], category,
-        shouldNotifyListeners: shouldNotifyListeners);
-  }
-
-  Future<void> addAllToCategory(Iterable<App> apps, Category category,
-      {bool shouldNotifyListeners = true}) async {
-    if (apps.isEmpty) return;
+    int index = await _database.nextAppCategoryOrder(category.id) ?? 0;
+    await _database.insertAppsCategories([
+      AppsCategoriesCompanion.insert(
+        categoryId: category.id,
+        appPackageName: app.packageName,
+        order: index,
+      )
+    ]);
 
     final categoryFound = _categoriesById[category.id];
-    if (categoryFound == null) return;
-
-    int nextOrder = await _database.nextAppCategoryOrder(categoryFound.id) ?? 0;
-    List<AppsCategoriesCompanion> batch = [];
-
-    for (final app in apps) {
-      batch.add(AppsCategoriesCompanion.insert(
-        categoryId: categoryFound.id,
-        appPackageName: app.packageName,
-        order: nextOrder,
-      ));
-      app.categoryOrders[categoryFound.id] = nextOrder;
+    if (categoryFound != null) {
+      app.categoryOrders[categoryFound.id] = index;
       categoryFound.applications.add(app);
-      nextOrder++;
-    }
 
-    await _database.insertAppsCategories(batch);
-
-    if (shouldNotifyListeners) {
-      sortCategory(categoryFound);
-      notifyListeners();
+      if (shouldNotifyListeners) {
+        sortCategory(categoryFound);
+        notifyListeners();
+      }
     }
   }
 
@@ -550,7 +542,28 @@ class AppsService extends ChangeNotifier {
         return; // Not a special category
     }
 
-    await addAllToCategory(appsToAdd, actualCategory);
+    if (appsToAdd.isEmpty) {
+      return;
+    }
+
+    int nextOrder =
+        await _database.nextAppCategoryOrder(actualCategory.id) ?? 0;
+    List<AppsCategoriesCompanion> batch = [];
+
+    for (final app in appsToAdd) {
+      batch.add(AppsCategoriesCompanion.insert(
+        categoryId: actualCategory.id,
+        appPackageName: app.packageName,
+        order: nextOrder,
+      ));
+      app.categoryOrders[actualCategory.id] = nextOrder;
+      actualCategory.applications.add(app);
+      nextOrder++;
+    }
+
+    await _database.insertAppsCategories(batch);
+    sortCategory(actualCategory);
+    notifyListeners();
   }
 
   // === FAVORITES METHODS ===
