@@ -141,7 +141,7 @@ class _FLauncherState extends State<FLauncher> {
       final physicalSize = MediaQuery.sizeOf(context);
       return Image(
         image: wallpaperService.wallpaper!,
-        key: Key("background_${wallpaperService.version}"),
+        key: const Key("background"),
         fit: BoxFit.cover,
         height: physicalSize.height,
         width: physicalSize.width
