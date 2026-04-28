@@ -17,8 +17,6 @@
  */
 
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flauncher/flauncher_channel.dart';
 import 'package:flutter/material.dart';
 
@@ -88,7 +86,7 @@ class NetworkService extends ChangeNotifier
             notifyListeners();
           }
         }).catchError((e) {
-          log("Error getting active network info: $e");
+          print("Error getting active network info: $e");
         });
 
     _checkPermissionAndStartPolling();
@@ -176,7 +174,7 @@ class NetworkService extends ChangeNotifier
 
   void _getNetworkInformation(Map<String, dynamic> map)
   {
-    log("NetworkService: _getNetworkInformation: $map");
+    print("NetworkService: _getNetworkInformation: $map");
     try {
       int networkTypeInt = map["networkType"] as int;
       _hasInternetAccess = map["internetAccess"] as bool;
@@ -185,9 +183,9 @@ class NetworkService extends ChangeNotifier
       if (_networkType == NetworkType.Cellular || _networkType == NetworkType.Wifi) {
         _wirelessNetworkSignalLevel = map["wirelessSignalLevel"] as int;
       }
-      log("NetworkService: parsed type $_networkType, signal $_wirelessNetworkSignalLevel");
+      print("NetworkService: parsed type $_networkType, signal $_wirelessNetworkSignalLevel");
     } catch (e) {
-      log("NetworkService error parsing: $e");
+      print("NetworkService error parsing: $e");
     }
   }
 
