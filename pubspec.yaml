@@ -25,7 +25,6 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.13
   flutter_localizations:
     sdk: flutter
-  pool: ^1.5.2
 
 dev_dependencies:
   flutter_test:
