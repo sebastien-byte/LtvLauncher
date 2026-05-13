@@ -63,6 +63,7 @@ This document provides important guidelines, architectural decisions, and contex
 
 ## Build, Environment, and Tooling
 
+- **Git & Environment Files:** **Never edit the `.gitignore` file.**
 - **Dependency Issues (Environment Constraints):**
   - Commands like `flutter pub get` or `flutter test` might unintentionally update `pubspec.lock` with newer/beta SDK constraints. Restore `pubspec.lock` (e.g., `git restore pubspec.lock`) before committing.
   - Constant evaluation errors (`FontWeight`) might occur when `google_fonts` >= 6.3.0. Pinning `google_fonts` to a lower version like `6.2.1` in `pubspec.yaml` can bypass this during test compilation.
