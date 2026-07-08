@@ -434,11 +434,11 @@ abstract class AppLocalizations {
   /// **'Show category titles'**
   String get showCategoryTitles;
 
-  /// No description provided for @squareAppBanners.
+  /// No description provided for @appBannerShape.
   ///
   /// In en, this message translates to:
-  /// **'Square App Banners'**
-  String get squareAppBanners;
+  /// **'App Banner Shape'**
+  String get appBannerShape;
 
   /// No description provided for @hideHighlightOutlineOnHomescreen.
   ///
