@@ -27,12 +27,24 @@ const _appKeyClickEnabledKey = "app_key_click_enabled";
 const _gradientUuidKey = "gradient_uuid";
 const _backButtonAction = "back_button_action";
 const _dateFormat = "date_format";
+const _showCategoryTitles = "show_category_titles";
+const _showDateInStatusBar = "show_date_in_status_bar";
+const _showTimeInStatusBar = "show_time_in_status_bar";
 const _timeFormat = "time_format";
 
 class SettingsService extends ChangeNotifier {
+  static final defaultDateFormat = "EEEE d";
+  static final defaultTimeFormat = "H:mm";
   final SharedPreferences _sharedPreferences;
 
+
   bool get appHighlightAnimationEnabled => _sharedPreferences.getBool(_appHighlightAnimationEnabledKey) ?? true;
+
+  bool get showCategoryTitles => _sharedPreferences.getBool(_showCategoryTitles) ?? true;
+
+  bool get showDateInStatusBar => _sharedPreferences.getBool(_showDateInStatusBar) ?? true;
+
+  bool get showTimeInStatusBar => _sharedPreferences.getBool(_showTimeInStatusBar) ?? true;
 
   bool get appKeyClickEnabled => _sharedPreferences.getBool(_appKeyClickEnabledKey) ?? true;
 
@@ -40,9 +52,9 @@ class SettingsService extends ChangeNotifier {
 
   String get backButtonAction => _sharedPreferences.getString(_backButtonAction) ?? BACK_BUTTON_ACTION_NOTHING;
 
-  String get dateFormat => _sharedPreferences.getString(_dateFormat) ?? "EEEE d";
+  String get dateFormat => _sharedPreferences.getString(_dateFormat) ?? defaultDateFormat;
 
-  String get timeFormat => _sharedPreferences.getString(_timeFormat) ?? "H:mm";
+  String get timeFormat => _sharedPreferences.getString(_timeFormat) ?? defaultTimeFormat;
 
   SettingsService(
     this._sharedPreferences
@@ -54,15 +66,11 @@ class SettingsService extends ChangeNotifier {
   }
 
   Future<void> setAppHighlightAnimationEnabled(bool value) async {
-    //await _sharedPreferences.setBool(_appHighlightAnimationEnabledKey, value);
-    //notifyListeners();
-    set(_appHighlightAnimationEnabledKey, value);
+    return set(_appHighlightAnimationEnabledKey, value);
   }
 
   Future<void> setAppKeyClickEnabled(bool value) async {
-    //await _sharedPreferences.setBool(_appKeyClickEnabledKey, value);
-    //notifyListeners();
-    set(_appKeyClickEnabledKey, value);
+    return set(_appKeyClickEnabledKey, value);
   }
 
   Future<void> setGradientUuid(String value) async {
@@ -81,5 +89,17 @@ class SettingsService extends ChangeNotifier {
       _sharedPreferences.setString(_timeFormat, timeFormatString)
     ]);
     notifyListeners();
+  }
+
+  Future<void> setShowCategoryTitles(bool show) async {
+    return set(_showCategoryTitles, show);
+  }
+
+  Future<void> setShowDateInStatusBar(bool show) async {
+    return set(_showDateInStatusBar, show);
+  }
+
+  Future<void> setShowTimeInStatusBar(bool show) async {
+    return set(_showTimeInStatusBar, show);
   }
 }
