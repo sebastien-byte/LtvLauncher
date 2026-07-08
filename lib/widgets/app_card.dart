@@ -141,12 +141,6 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final bool showAppNames = context.select<SettingsService, bool>((s) => s.showAppNamesBelowIcons);
-    final bool squareBannerShapeEnabled = context.select<SettingsService, bool>((s) => s.squareBannerShapeEnabled);
-    final bool hideHighlightOutlineOnHomescreen = context.select<SettingsService, bool>((s) => s.hideHighlightOutlineOnHomescreen);
-    final bool appSelectorTransitionAnimationEnabled = context.select<SettingsService, bool>((s) => s.appSelectorTransitionAnimationEnabled);
-
-    final BorderRadius borderRadius = squareBannerShapeEnabled ? BorderRadius.zero : BorderRadius.circular(8);
-    final BorderRadius innerBorderRadius = squareBannerShapeEnabled ? BorderRadius.zero : BorderRadius.circular(6);
 
     return FocusKeyboardListener(
       onPressed: (key) => _onPressed(context, key),
@@ -169,12 +163,12 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                     aspectRatio: 16 / 9,
                     child: RepaintBoundary(
                       child: AnimatedContainer(
-                        duration: appSelectorTransitionAnimationEnabled ? const Duration(milliseconds: 200) : Duration.zero,
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut,
                         transformAlignment: Alignment.center,
                         transform: _scaleTransform(context),
                         child: Material(
-                          borderRadius: borderRadius,
+                          borderRadius: BorderRadius.circular(8),
                           clipBehavior: Clip.antiAlias,
                           elevation: shouldHighlight ? 16 : 0,
                           shadowColor: Colors.black,
@@ -207,7 +201,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                               if (_moving) ..._arrows(),
                               IgnorePointer(
                                 child: AnimatedOpacity(
-                                  duration: appSelectorTransitionAnimationEnabled ? const Duration(milliseconds: 200) : Duration.zero,
+                                  duration: const Duration(milliseconds: 200),
                                   curve: Curves.easeInOut,
                                   opacity: shouldHighlight ? 0 : 0.10,
                                   child: Container(color: Colors.black),
@@ -219,7 +213,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                   final (animationEnabled, accentColorHex) = settings;
                                   final accentColor = Color(int.parse('FF$accentColorHex', radix: 16));
 
-                                  if (shouldHighlight && !hideHighlightOutlineOnHomescreen) {
+                                  if (shouldHighlight) {
                                     if (animationEnabled) {
                                       _animation.repeat(reverse: true);
                                       return AnimatedBuilder(
@@ -234,7 +228,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                                 // Outer outline (Accent Color)
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                    borderRadius: borderRadius,
+                                                    borderRadius: BorderRadius.circular(8),
                                                     border: Border.all(
                                                       color: accentColor.withOpacity(opacity),
                                                       width: 2
@@ -246,7 +240,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                                   padding: const EdgeInsets.all(2),
                                                   child: Container(
                                                     decoration: BoxDecoration(
-                                                      borderRadius: innerBorderRadius,
+                                                      borderRadius: BorderRadius.circular(6),
                                                       border: Border.all(
                                                         color: Colors.black.withOpacity(opacity),
                                                         width: 2
@@ -267,7 +261,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                           children: [
                                             Container(
                                               decoration: BoxDecoration(
-                                                borderRadius: borderRadius,
+                                                borderRadius: BorderRadius.circular(8),
                                                 border: Border.all(
                                                   color: accentColor,
                                                   width: 2
@@ -278,7 +272,7 @@ class _AppCardState extends State<AppCard> with SingleTickerProviderStateMixin {
                                               padding: const EdgeInsets.all(2),
                                               child: Container(
                                                 decoration: BoxDecoration(
-                                                  borderRadius: innerBorderRadius,
+                                                  borderRadius: BorderRadius.circular(6),
                                                   border: Border.all(
                                                     color: Colors.black,
                                                     width: 2
