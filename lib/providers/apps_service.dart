@@ -259,7 +259,16 @@ class AppsService extends ChangeNotifier
     final Iterable<App> appsRemovedFromSystem = appsFromDatabase
         .where((app) => !appsFromSystemByPackageName.containsKey(app.packageName));
 
-    final List<String> uninstalledApplications = appsRemovedFromSystem.map((app) => app.packageName).toList();
+    final List<String> uninstalledApplications = [];
+    for (App app in appsRemovedFromSystem) {
+      String packageName = app.packageName;
+
+      // TODO: Is this really necessary? Can't we get this information from the getApplications method?
+      bool appExists = await _fLauncherChannel.applicationExists(packageName);
+      if (!appExists) {
+        uninstalledApplications.add(packageName);
+      }
+    }
 
     await _database.transaction(() async {
       await _database.persistApps(appsFromSystemByPackageName.values.map((record) => record.$2));
@@ -283,13 +292,6 @@ class AppsService extends ChangeNotifier
     _launcherSections.addAll(spacers);
     _launcherSections.sort((ls0, ls1) => ls0.order.compareTo(ls1.order));
 
-    Map<String, List<AppCategory>> appsCategoriesByPackage = {};
-    if (appsCategories.isNotEmpty) {
-      for (AppCategory appCategory in appsCategories) {
-        (appsCategoriesByPackage[appCategory.appPackageName] ??= []).add(appCategory);
-      }
-    }
-
     for (App application in _applications.values) {
       Map? applicationFromSystem = appsFromSystemByPackageName[application.packageName]?.$1;
 
@@ -303,15 +305,14 @@ class AppsService extends ChangeNotifier
       }
 
       if (appsCategories.isNotEmpty && !application.hidden) {
-        List<AppCategory>? currentApplicationCategories = appsCategoriesByPackage[application.packageName];
+        Iterable<AppCategory> currentApplicationCategories = appsCategories
+            .where((appCategory) => appCategory.appPackageName == application.packageName);
 
-        if (currentApplicationCategories != null) {
-          for (AppCategory appCategory in currentApplicationCategories) {
-            if (_categoriesById.containsKey(appCategory.categoryId)) {
-              Category category = _categoriesById[appCategory.categoryId]!;
-              application.categoryOrders[category.id] = appCategory.order;
-              category.applications.add(application);
-            }
+        for (AppCategory appCategory in currentApplicationCategories) {
+          if (_categoriesById.containsKey(appCategory.categoryId)) {
+            Category category = _categoriesById[appCategory.categoryId]!;
+            application.categoryOrders[category.id] = appCategory.order;
+            category.applications.add(application);
           }
         }
       }
@@ -512,26 +513,10 @@ class AppsService extends ChangeNotifier
         return; // Not a special category
     }
     
-    if (appsToAdd.isEmpty) {
-      return;
-    }
-
-    int nextOrder = await _database.nextAppCategoryOrder(actualCategory.id) ?? 0;
-    List<AppsCategoriesCompanion> batch = [];
-
     for (final app in appsToAdd) {
-      batch.add(AppsCategoriesCompanion.insert(
-        categoryId: actualCategory.id,
-        appPackageName: app.packageName,
-        order: nextOrder,
-      ));
-      app.categoryOrders[actualCategory.id] = nextOrder;
-      actualCategory.applications.add(app);
-      nextOrder++;
+      await addToCategory(app, actualCategory, shouldNotifyListeners: false);
     }
     
-    await _database.insertAppsCategories(batch);
-    sortCategory(actualCategory);
     notifyListeners();
   }
 

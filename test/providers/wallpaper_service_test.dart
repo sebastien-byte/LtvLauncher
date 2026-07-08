@@ -43,7 +43,6 @@ void main() {
       final imagePicker = _MockImagePicker();
       final fLauncherChannel = MockFLauncherChannel();
       final settingsService = MockSettingsService();
-      when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
       when(imagePicker.pickImage(source: ImageSource.gallery)).thenAnswer((_) => Future.value(pickedFile));
       when(fLauncherChannel.checkForGetContentAvailability()).thenAnswer((_) => Future.value(true));
       final wallpaperService = WallpaperService(fLauncherChannel, settingsService);
@@ -60,9 +59,7 @@ void main() {
     test("throws error when no file explorer installed", () async {
       final fLauncherChannel = MockFLauncherChannel();
       when(fLauncherChannel.checkForGetContentAvailability()).thenAnswer((_) => Future.value(false));
-      final settingsService = MockSettingsService();
-      when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
-      final wallpaperService = WallpaperService(fLauncherChannel, settingsService);
+      final wallpaperService = WallpaperService(fLauncherChannel, MockSettingsService());
       await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
 
       expect(() async => await wallpaperService.pickWallpaper(), throwsA(isInstanceOf<NoFileExplorerException>()));
@@ -73,7 +70,6 @@ void main() {
   test("setGradient", () async {
     final fLauncherChannel = MockFLauncherChannel();
     final settingsService = MockSettingsService();
-      when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
     final wallpaperService = WallpaperService(fLauncherChannel, settingsService);
 
     await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
@@ -87,27 +83,25 @@ void main() {
     test("without uuid from settings", () async {
       final fLauncherChannel = MockFLauncherChannel();
       final settingsService = MockSettingsService();
-      when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
       final wallpaperService = WallpaperService(fLauncherChannel, settingsService);
       when(settingsService.gradientUuid).thenReturn(null);
 
       await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
       final gradient = wallpaperService.gradient;
 
-      expect(gradient.uuid, FLauncherGradients.pitchBlack.uuid);
+      expect(gradient, FLauncherGradients.greatWhale);
     });
 
     test("with uuid from settings", () async {
       final fLauncherChannel = MockFLauncherChannel();
       final settingsService = MockSettingsService();
-      when(settingsService.timeBasedWallpaperEnabled).thenReturn(false);
       final wallpaperService = WallpaperService(fLauncherChannel, settingsService);
       when(settingsService.gradientUuid).thenReturn(FLauncherGradients.grassShampoo.uuid);
       await untilCalled(pathProviderPlatform.getApplicationDocumentsPath());
 
       final gradient = wallpaperService.gradient;
 
-      expect(gradient.uuid, FLauncherGradients.grassShampoo.uuid);
+      expect(gradient, FLauncherGradients.grassShampoo);
     });
   });
 }
