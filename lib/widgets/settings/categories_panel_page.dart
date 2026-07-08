@@ -23,17 +23,14 @@ import 'package:flauncher/widgets/ensure_visible.dart';
 import 'package:flauncher/widgets/settings/category_panel_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CategoriesPanelPage extends StatelessWidget {
   static const String routeName = "categories_panel";
 
   @override
-  Widget build(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-    return Column(
+  Widget build(BuildContext context) => Column(
         children: [
-          Text(localizations.categories, style: Theme.of(context).textTheme.titleLarge),
+          Text("Categories", style: Theme.of(context).textTheme.titleLarge),
           Divider(),
           Selector<AppsService, List<CategoryWithApps>>(
             selector: (_, appsService) => appsService.categoriesWithApps,
@@ -47,7 +44,7 @@ class CategoriesPanelPage extends StatelessWidget {
           ),
           TextButton.icon(
             icon: Icon(Icons.add),
-            label: Text(localizations.addCategory),
+            label: Text("Add Category"),
             onPressed: () async {
               final categoryName = await showDialog<String>(context: context, builder: (_) => AddCategoryDialog());
               if (categoryName != null) {
@@ -57,7 +54,6 @@ class CategoriesPanelPage extends StatelessWidget {
           ),
         ],
       );
-  }
 
   Widget _category(BuildContext context, List<CategoryWithApps> categories, int index) => Padding(
         key: Key(categories[index].category.id.toString()),

@@ -45,6 +45,8 @@ void main() {
             name: "FLauncher",
             className: ".MainActivity",
             version: "0.0.1",
+            icon: Value(Uint8List.fromList([0x01])),
+            banner: Value(Uint8List.fromList([0x02])),
           ),
         );
     final categoryId = await oldDb.into(oldDb.categories).insert(
@@ -66,6 +68,8 @@ void main() {
     expect(app.packageName, "me.efesser.flauncher");
     expect(app.name, "FLauncher");
     expect(app.version, "0.0.1");
+    expect(app.icon, Uint8List.fromList([0x01]));
+    expect(app.banner, Uint8List.fromList([0x02]));
     expect(app.hidden, false);
     expect(app.sideloaded, false);
     expect(category.id, 1);
@@ -90,6 +94,8 @@ void main() {
             packageName: "me.efesser.flauncher",
             name: "FLauncher",
             version: "0.0.1",
+            icon: Value(Uint8List.fromList([0x01])),
+            banner: Value(Uint8List.fromList([0x02])),
           ),
         );
     final categoryId = await oldDb.into(oldDb.categories).insert(
@@ -111,6 +117,8 @@ void main() {
     expect(app.packageName, "me.efesser.flauncher");
     expect(app.name, "FLauncher");
     expect(app.version, "0.0.1");
+    expect(app.icon, Uint8List.fromList([0x01]));
+    expect(app.banner, Uint8List.fromList([0x02]));
     expect(app.hidden, false);
     expect(app.sideloaded, false);
     expect(category.id, 1);
@@ -135,6 +143,8 @@ void main() {
             packageName: "me.efesser.flauncher",
             name: "FLauncher",
             version: "0.0.1",
+            icon: Value(Uint8List.fromList([0x01])),
+            banner: Value(Uint8List.fromList([0x02])),
           ),
         );
     final categoryId = await oldDb.into(oldDb.categories).insert(
@@ -156,6 +166,8 @@ void main() {
     expect(app.packageName, "me.efesser.flauncher");
     expect(app.name, "FLauncher");
     expect(app.version, "0.0.1");
+    expect(app.icon, Uint8List.fromList([0x01]));
+    expect(app.banner, Uint8List.fromList([0x02]));
     expect(app.hidden, false);
     expect(app.sideloaded, false);
     expect(category.id, 1);
@@ -180,6 +192,8 @@ void main() {
             packageName: "me.efesser.flauncher",
             name: "FLauncher",
             version: "0.0.1",
+            icon: Value(Uint8List.fromList([0x01])),
+            banner: Value(Uint8List.fromList([0x02])),
           ),
         );
     final categoryId = await oldDb.into(oldDb.categories).insert(
@@ -201,6 +215,8 @@ void main() {
     expect(app.packageName, "me.efesser.flauncher");
     expect(app.name, "FLauncher");
     expect(app.version, "0.0.1");
+    expect(app.icon, Uint8List.fromList([0x01]));
+    expect(app.banner, Uint8List.fromList([0x02]));
     expect(app.hidden, false);
     expect(app.sideloaded, false);
     expect(category.id, 1);

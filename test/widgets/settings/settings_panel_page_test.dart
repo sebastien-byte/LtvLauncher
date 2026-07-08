@@ -32,7 +32,6 @@ import 'package:package_info_plus_platform_interface/package_info_platform_inter
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:provider/provider.dart';
 
-import '../../flauncher_test.dart';
 import '../../mocks.mocks.dart';
 
 void main() {
@@ -49,6 +48,9 @@ void main() {
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
     when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
 
     await _pumpWidgetWithProviders(tester, settingsService, appsService);
@@ -64,6 +66,9 @@ void main() {
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
     when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
 
     await _pumpWidgetWithProviders(tester, settingsService, appsService);
@@ -80,6 +85,9 @@ void main() {
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
     when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
 
     await _pumpWidgetWithProviders(tester, settingsService, appsService);
@@ -97,6 +105,9 @@ void main() {
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
     when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
 
     await _pumpWidgetWithProviders(tester, settingsService, appsService);
@@ -110,13 +121,17 @@ void main() {
     verify(appsService.openSettings());
   });
 
-
   testWidgets("'Use 24-hour time format' toggle calls SettingsService", (tester) async {
+    final settingsService = MockSettingsService();
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
+    when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
 
-    await _pumpWidgetWithProviders(tester, mkSettingsService(), appsService);
+    await _pumpWidgetWithProviders(tester, settingsService, appsService);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
@@ -125,7 +140,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
-    //verify(settingsService.setDateTimeFormat("EEE", "HHH"));
+    verify(settingsService.setUse24HourTimeFormat(true));
   });
 
   testWidgets("'Crash Reporting' toggle calls SettingsService", (tester) async {
@@ -133,6 +148,9 @@ void main() {
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
     when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
 
     await _pumpWidgetWithProviders(tester, settingsService, appsService);
@@ -146,6 +164,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
+    verify(settingsService.setCrashReportsEnabled(true));
   });
 
   testWidgets("'Analytics Reporting' toggle calls SettingsService", (tester) async {
@@ -153,6 +172,9 @@ void main() {
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
     when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
 
     await _pumpWidgetWithProviders(tester, settingsService, appsService);
@@ -167,6 +189,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
+    verify(settingsService.setAnalyticsEnabled(true));
   });
 
   testWidgets("'About FLauncher' opens about dialog", (tester) async {
@@ -174,6 +197,9 @@ void main() {
     final appsService = MockAppsService();
     when(appsService.categoriesWithApps).thenReturn([]);
     when(appsService.applications).thenReturn([]);
+    when(settingsService.crashReportsEnabled).thenReturn(false);
+    when(settingsService.analyticsEnabled).thenReturn(false);
+    when(settingsService.use24HourTimeFormat).thenReturn(false);
     when(settingsService.appHighlightAnimationEnabled).thenReturn(true);
     PackageInfoPlatform.instance = _MockPackageInfoPlatform();
 
@@ -220,7 +246,7 @@ Future<void> _pumpWidgetWithProviders(
 
 class _MockPackageInfoPlatform with MockPlatformInterfaceMixin implements PackageInfoPlatform {
   @override
-  Future<PackageInfoData> getAll({String? baseUrl}) async => PackageInfoData(
+  Future<PackageInfoData> getAll() async => PackageInfoData(
         appName: "FLauncher",
         packageName: "me.efesser.flauncher",
         version: "1.0.0",

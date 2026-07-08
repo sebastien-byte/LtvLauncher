@@ -24,6 +24,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../mocks.dart';
 import '../mocks.mocks.dart';
@@ -43,6 +44,8 @@ void main() {
       packageName: "me.efesser.flauncher",
       name: "FLauncher",
       version: "1.0.0",
+      banner: kTransparentImage,
+      icon: kTransparentImage,
     );
     when(appsService.applications).thenReturn([app]);
     await _pumpWidgetWithProviders(tester, appsService, null, app);
@@ -60,6 +63,8 @@ void main() {
       packageName: "me.efesser.flauncher",
       name: "FLauncher",
       version: "1.0.0",
+      banner: kTransparentImage,
+      icon: kTransparentImage,
     );
     when(appsService.categoriesWithApps).thenReturn([
       CategoryWithApps(category, [app]),
@@ -81,6 +86,8 @@ void main() {
       packageName: "me.efesser.flauncher",
       name: "FLauncher",
       version: "1.0.0",
+      banner: kTransparentImage,
+      icon: kTransparentImage,
     );
     when(appsService.categoriesWithApps).thenReturn([
       CategoryWithApps(category, [app]),
@@ -103,6 +110,8 @@ void main() {
       packageName: "me.efesser.flauncher",
       name: "FLauncher",
       version: "1.0.0",
+      banner: kTransparentImage,
+      icon: kTransparentImage,
     );
     when(appsService.categoriesWithApps).thenReturn([
       CategoryWithApps(category, [app]),
@@ -126,6 +135,8 @@ void main() {
       packageName: "me.efesser.flauncher",
       name: "FLauncher",
       version: "1.0.0",
+      banner: kTransparentImage,
+      icon: kTransparentImage,
     );
     when(appsService.categoriesWithApps).thenReturn([
       CategoryWithApps(category, [app]),

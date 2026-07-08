@@ -19,6 +19,7 @@
 import 'package:flauncher/providers/settings_service.dart';
 import 'package:flauncher/providers/wallpaper_service.dart';
 import 'package:flauncher/widgets/settings/gradient_panel_page.dart';
+import 'package:flauncher/widgets/settings/unsplash_panel_page.dart';
 import 'package:flauncher/widgets/settings/wallpaper_panel_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,9 +38,25 @@ void main() {
     binding.platformDispatcher.textScaleFactorTestValue = 0.8;
   });
 
+  testWidgets("'Unsplash' navigates to UnsplashPanelPage", (tester) async {
+    final settingsService = MockSettingsService();
+    final wallpaperService = MockWallpaperService();
+    when(settingsService.unsplashEnabled).thenReturn(true);
+    when(settingsService.unsplashAuthor).thenReturn('{"username": "John Doe", "link": "https://localhost"}');
+
+    await _pumpWidgetWithProviders(tester, settingsService, wallpaperService);
+
+    expect(find.text("Photo by John Doe on Unsplash"), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(Key("UnsplashPanelPage")), findsOneWidget);
+  });
+
   testWidgets("'Gradient' navigates to GradientPanelPage", (tester) async {
     final settingsService = MockSettingsService();
     final wallpaperService = MockWallpaperService();
+    when(settingsService.unsplashEnabled).thenReturn(true);
+    when(settingsService.unsplashAuthor).thenReturn(null);
 
     await _pumpWidgetWithProviders(tester, settingsService, wallpaperService);
 
@@ -47,12 +64,14 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(find.byKey(Key("GradientPanelPage")), findsOneWidget);
-  }, skip: true);
+  });
 
   group("'Custom'", () {
     testWidgets("opens file explorer if available", (tester) async {
       final settingsService = MockSettingsService();
       final wallpaperService = MockWallpaperService();
+      when(settingsService.unsplashEnabled).thenReturn(true);
+      when(settingsService.unsplashAuthor).thenReturn(null);
 
       await _pumpWidgetWithProviders(tester, settingsService, wallpaperService);
 
@@ -66,7 +85,9 @@ void main() {
     testWidgets("shows snack bar if not file explorer available", (tester) async {
       final settingsService = MockSettingsService();
       final wallpaperService = MockWallpaperService();
+      when(settingsService.unsplashEnabled).thenReturn(true);
       when(wallpaperService.pickWallpaper()).thenThrow(NoFileExplorerException());
+      when(settingsService.unsplashAuthor).thenReturn(null);
 
       await _pumpWidgetWithProviders(tester, settingsService, wallpaperService);
 
@@ -93,6 +114,7 @@ Future<void> _pumpWidgetWithProviders(
       ],
       builder: (_, __) => MaterialApp(
         routes: {
+          UnsplashPanelPage.routeName: (_) => Container(key: Key("UnsplashPanelPage")),
           GradientPanelPage.routeName: (_) => Container(key: Key("GradientPanelPage")),
         },
         home: Scaffold(body: WallpaperPanelPage()),

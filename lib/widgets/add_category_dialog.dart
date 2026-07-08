@@ -17,7 +17,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddCategoryDialog extends StatelessWidget {
   final String? initialValue;
@@ -27,19 +26,16 @@ class AddCategoryDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-
-    return SimpleDialog(
+  Widget build(BuildContext context) => SimpleDialog(
         insetPadding: EdgeInsets.only(bottom: 120),
         contentPadding: EdgeInsets.all(24),
-        title: Text(initialValue != null ? localizations.renameCategory : localizations.addCategory),
+        title: Text(initialValue != null ? "Rename Category" : "Add Category"),
         children: [
           TextFormField(
             autofocus: true,
             initialValue: initialValue,
-            decoration: InputDecoration(labelText: localizations.name),
-            validator: (value) => value!.trim().isEmpty ? localizations.mustNotBeEmpty : null,
+            decoration: InputDecoration(labelText: "Name"),
+            validator: (value) => value!.trim().isEmpty ? "Must not be empty" : null,
             autovalidateMode: AutovalidateMode.always,
             keyboardType: TextInputType.text,
             textCapitalization: TextCapitalization.sentences,
@@ -51,5 +47,4 @@ class AddCategoryDialog extends StatelessWidget {
           )
         ],
       );
-  }
 }

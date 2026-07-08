@@ -24,9 +24,6 @@ import 'package:flauncher/widgets/settings/categories_panel_page.dart';
 import 'package:flauncher/widgets/settings/settings_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import '../providers/settings_service.dart';
 
 class CategoryRow extends StatelessWidget {
   final Category category;
@@ -39,26 +36,16 @@ class CategoryRow extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Selector<SettingsService, bool>(
-            selector: (context, service) => service.showCategoryTitles,
-            builder: (context, showCategoriesTitle, _) {
-              if (showCategoriesTitle) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 16, bottom: 8),
-                  child: Text(category.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(shadows: [const Shadow(color: Colors.black54, offset: Offset(1, 1), blurRadius: 8)])),
-                );
-              }
-
-              return SizedBox.shrink();
-            }
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            child: Text(category.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(shadows: [const Shadow(color: Colors.black54, offset: Offset(1, 1), blurRadius: 8)])),
           ),
           applications.isNotEmpty
               ? SizedBox(
@@ -89,15 +76,11 @@ class CategoryRow extends StatelessWidget {
               : _emptyState(context),
         ],
       );
-  }
 
   int _findChildIndex(Key key) =>
       applications.indexWhere((app) => "${category.id}-${app.packageName}" == (key as ValueKey<String>).value);
 
-  Widget _emptyState(BuildContext context) {
-    AppLocalizations localizations = AppLocalizations.of(context)!;
-
-    return SizedBox(
+  Widget _emptyState(BuildContext context) => SizedBox(
         height: 110,
         child: EnsureVisible(
           alignment: 0.1,
@@ -115,11 +98,11 @@ class CategoryRow extends StatelessWidget {
                       context: context,
                       builder: (_) => const SettingsPanel(initialRoute: CategoriesPanelPage.routeName),
                     ),
-                    child: Padding(
+                    child: const Padding(
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          localizations.textEmptyCategory,
+                          "This category is empty.",
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -131,7 +114,6 @@ class CategoryRow extends StatelessWidget {
           ),
         ),
       );
-  }
 
   void _onMove(BuildContext context, AxisDirection direction, int index) {
     int? newIndex;

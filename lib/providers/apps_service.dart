@@ -27,7 +27,6 @@ import 'package:flutter/foundation.dart' hide Category;
 class AppsService extends ChangeNotifier {
   final FLauncherChannel _fLauncherChannel;
   final FLauncherDatabase _database;
-
   bool _initialized = false;
 
   List<App> _applications = [];
@@ -57,8 +56,7 @@ class AppsService extends ChangeNotifier {
           await _database.persistApps([_buildAppCompanion(event["activityInfo"])]);
           break;
         case "PACKAGES_AVAILABLE":
-          List<dynamic> appsInfo = event["activitiesInfo"];
-          await _database.persistApps((appsInfo).map(_buildAppCompanion).toList());
+          await _database.persistApps((event["activitiesInfo"] as List<dynamic>).map(_buildAppCompanion).toList());
           break;
         case "PACKAGE_REMOVED":
           await _database.deleteApps([event["packageName"]]);
